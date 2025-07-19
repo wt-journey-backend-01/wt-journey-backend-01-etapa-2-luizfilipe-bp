@@ -7,7 +7,7 @@ const casosRouter = require('./routes/casosRoutes');
 app.use('/casos', casosRouter);
 
 const agentesRouter = require('./routes/agentesRoutes');
-app.use(agentesRouter);
+app.use('/agentes', agentesRouter);
 
 const PORT = 3000;
 app.listen(PORT, () => {

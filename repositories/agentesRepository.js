@@ -36,9 +36,7 @@ function update(id, updatedAgenteData) {
 
 function remove(id) {
     const agenteIndex = agentes.findIndex((c) => c.id === id);
-    const deletedAgente = agentes.splice(agenteIndex, 1);
-
-    return deletedAgente[0];
+    agentes.splice(agenteIndex, 1);
 }
 
 module.exports = {

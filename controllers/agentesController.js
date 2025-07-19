@@ -8,7 +8,7 @@ function getAllAgentes(req, res) {
     if (agentes.length === 0) {
         return res.status(204).send();
     }
-    res.json(agentes);
+    res.status(200).json(agentes);
 }
 
 function getAgenteById(req, res) {
@@ -21,7 +21,7 @@ function getAgenteById(req, res) {
             .send({ messagem: `Não foi possível encontrar o agente de Id: ${id}` });
     }
 
-    res.json(agente);
+    res.status(200).json(agente);
 }
 
 function postAgente(req, res) {
@@ -63,7 +63,7 @@ function putAgente(req, res) {
     };
 
     const updatedAgente = agentesRepository.update(id, updatedAgenteData);
-    res.json(updatedAgente);
+    res.status(200).json(updatedAgente);
 }
 
 function patchAgente(req, res) {
@@ -90,7 +90,7 @@ function patchAgente(req, res) {
     };
 
     const updatedAgente = agentesRepository.update(id, updatedAgenteData);
-    res.json(updatedAgente);
+    res.status(200).json(updatedAgente);
 }
 
 function deleteAgente(req, res) {
@@ -101,7 +101,7 @@ function deleteAgente(req, res) {
         return res.status(404).send({ mensagem: `Não foi possível deletar o agente de Id: ${id}` });
     }
 
-    const deletedAgente = agentesRepository.remove(id);
+    agentesRepository.remove(id);
     res.status(204).send();
 }
 module.exports = {
