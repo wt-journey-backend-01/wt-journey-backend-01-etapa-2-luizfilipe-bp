@@ -1,18 +1,66 @@
-const casos = [
-    {
-        id: "f5fb2ad5-22a8-4cb4-90f2-8733517a0d46",
-        titulo: "homicidio",
-        descricao: "Disparos foram reportados às 22:33 do dia 10/07/2007 na região do bairro União, resultando na morte da vítima, um homem de 45 anos.",
-        status: "aberto",
-        agente_id: "401bccf5-cf9e-489d-8412-446cd169a0f1" 
-    
-    },
-    //Demais objetos
-]
+const { v4: uuid } = require('uuid');
+const casos = [];
+function findAll(agente_id, status) {
+    let retrieviedCasos = [...casos];
 
-function findAll() {
-    return casos
+    if (agente_id) {
+        retrieviedCasos = retrieviedCasos.filter((caso) => caso.agente_id === agente_id);
+    }
+
+    if (status) {
+        retrieviedCasos = retrieviedCasos.filter((caso) => caso.status === status);
+    }
+    return retrieviedCasos;
 }
+
+function findById(id) {
+    return casos.find((c) => c.id === id);
+}
+
+function create(caso) {
+    const createdCaso = { id: uuid(), ...caso };
+    casos.push(createdCaso);
+    return createdCaso;
+}
+
+function update(id, updatedCasoData) {
+    const casoIndex = casos.findIndex((c) => c.id === id);
+    casos[casoIndex] = { id: casos[casoIndex].id, ...updatedCasoData };
+    return casos[casoIndex];
+}
+
+function remove(id) {
+    const casoIndex = casos.findIndex((c) => c.id === id);
+    casos.splice(casoIndex, 1);
+}
+
+function search(search) {
+    if (!search) {
+        return casos;
+    }
+
+    search = search.trim();
+    if (search.length === 0) {
+        return casos;
+    }
+
+    search = search.toLowerCase();
+    const filteredCasos = casos.filter((caso) => {
+        console.log(caso);
+        return (
+            caso.titulo.toLowerCase().includes(search) ||
+            caso.descricao.toLowerCase().includes(search)
+        );
+    });
+
+    return filteredCasos;
+}
+
 module.exports = {
-    findAll
-}
+    findAll,
+    findById,
+    create,
+    update,
+    remove,
+    search,
+};
