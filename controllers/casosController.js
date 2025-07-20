@@ -119,7 +119,8 @@ function updateCaso(req, res) {
 function patchCaso(req, res) {
     try {
         const id = req.params.id;
-        if (!casosRepository.findById(id)) {
+        const caso = casosRepository.findById(id);
+        if (!caso) {
             return res
                 .status(404)
                 .send({ mensagem: `Não foi possível encontrar o caso de Id: ${id}` });
@@ -139,15 +140,17 @@ function patchCaso(req, res) {
         }
 
         const patchedCasoData = {
-            titulo: titulo ?? existingCaso.titulo,
-            descricao: descricao ?? existingCaso.descricao,
-            status: status ?? existingCaso.status,
-            agente_id: agente_id ?? existingCaso.agente_id,
+            titulo: titulo ?? caso.titulo,
+            descricao: descricao ?? caso.descricao,
+            status: status ?? caso.status,
+            agente_id: agente_id ?? caso.agente_id,
         };
 
         const patchedCaso = casosRepository.update(id, patchedCasoData);
         res.status(200).json(patchedCaso);
-    } catch (error) {}
+    } catch (error) {
+        return next(error);
+    }
 }
 
 function deleteCaso(req, res) {
