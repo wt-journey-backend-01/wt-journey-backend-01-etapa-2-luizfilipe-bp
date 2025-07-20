@@ -3,15 +3,15 @@ const agentesRepository = require('../repositories/agentesRepository');
 const z = require('zod');
 
 const casoSchema = z.object({
-    titulo: z.string().min(1, "O campo 'título' é obrigatório").partial(),
-    descricao: z.string().min(1, "O campo 'descrição' é obrigatório").partial(),
+    titulo: z.string().min(1, "O campo 'título' é obrigatório").optional(),
+    descricao: z.string().min(1, "O campo 'descrição' é obrigatório").optional(),
     status: z
         .enum(
             ['aberto', 'solucionado'],
             "O campo 'status' pode ser somente 'aberto' ou 'solucionado'"
         )
-        .partial(),
-    agente_id: z.string().min(1, "O campo 'agente_id' é obrigatório").partial(),
+        .optional(),
+    agente_id: z.string().min(1, "O campo 'agente_id' é obrigatório").optional(),
 });
 
 function getAllCasos(req, res) {
