@@ -82,7 +82,7 @@ function postCaso(req, res, next) {
     }
 }
 
-function updateCaso(req, res) {
+function updateCaso(req, res, next) {
     try {
         const id = req.params.id;
         if (!casosRepository.findById(id)) {
@@ -118,7 +118,7 @@ function updateCaso(req, res) {
     }
 }
 
-function patchCaso(req, res) {
+function patchCaso(req, res, next) {
     try {
         const id = req.params.id;
         const caso = casosRepository.findById(id);
@@ -135,7 +135,7 @@ function patchCaso(req, res) {
         }
 
         const { titulo, descricao, status, agente_id } = casoSchema.partial().parse(req.body);
-        if (!agentesRepository.findById(agente_id)) {
+        if (agente_id && !agentesRepository.findById(agente_id)) {
             return res
                 .status(400)
                 .send({ mensagem: `Não foi possível encontrar agente de Id: ${agente_id}` });
