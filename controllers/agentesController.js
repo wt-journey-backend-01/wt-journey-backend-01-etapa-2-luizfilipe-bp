@@ -3,12 +3,17 @@ const z = require('zod');
 
 const agenteSchema = z.object({
     nome: z.string().min(1, "O campo 'nome' é obrigatório"),
-    dataDeIncorporacao: z.iso
-        .date("O campo 'dataDeIncorporacao' deve ser uma data no formato YYYY-MM-DD")
-        .refine(
-            (dataDeIncorporacao) => isValidDataDeIncorporacao(dataDeIncorporacao),
-            'A dataDeIncorporacao não pode ser uma data futura'
-        ),
+    dataDeIncorporacao: z.string().refine(
+        (dateStr) => {
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return false;
+            const today = new Date();
+            return date <= today;
+        },
+        {
+            message: "O campo 'dataDeIncorporacao' deve ser uma data válida e não pode ser futura",
+        }
+    ),
     cargo: z.enum(
         ['inspetor', 'delegado'],
         "O campo 'cargo' pode ser somente 'inspetor' ou 'delegado'"

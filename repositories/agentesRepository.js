@@ -30,6 +30,9 @@ function create(agente) {
 
 function update(id, updatedAgenteData) {
     const agenteIndex = agentes.findIndex((c) => c.id === id);
+    if (agenteIndex === -1) {
+        return null;
+    }
     agentes[agenteIndex] = { id: agentes[agenteIndex].id, ...updatedAgenteData };
     return agentes[agenteIndex];
 }

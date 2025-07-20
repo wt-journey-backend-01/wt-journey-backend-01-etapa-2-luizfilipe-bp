@@ -18,7 +18,7 @@ function getAllCasos(req, res) {
 
     const casos = casosRepository.findAll(agente_id, status);
     if (casos.length === 0) {
-        return res.status(204).send({ mensagem: 'Não há casos cadastrados' });
+        return res.status(204).send();
     }
     res.status(200).json(casos);
 }
