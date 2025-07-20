@@ -40,7 +40,9 @@ function getAgenteByCaso(req, res) {
 
     const caso = casosRepository.findById(caso_id);
     if (!caso) {
-        return res.status(404).send({ mensagem: `Não foi possível encontrar o caso de Id: ${id}` });
+        return res
+            .status(404)
+            .send({ mensagem: `Não foi possível encontrar o caso de Id: ${caso_id}` });
     }
 
     const agente_id = caso.agente_id;
