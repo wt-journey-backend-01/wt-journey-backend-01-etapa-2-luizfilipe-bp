@@ -19,7 +19,8 @@
   "homepage": "https://github.com/wt-journey-backend-01/wt-journey-backend-01-etapa-2-luizfilipe-bp#readme",
   "dependencies": {
     "express": "^5.1.0",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "axios": "^1.10.0"

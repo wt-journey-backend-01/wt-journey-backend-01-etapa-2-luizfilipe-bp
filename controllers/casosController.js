@@ -1,5 +1,18 @@
 const casosRepository = require('../repositories/casosRepository');
 const agentesRepository = require('../repositories/agentesRepository');
+const z = require('zod');
+
+const casoSchema = z.object({
+    titulo: z.string().min(1, "O campo 'título' é obrigatório").partial(),
+    descricao: z.string().min(1, "O campo 'descrição' é obrigatório").partial(),
+    status: z
+        .enum(
+            ['aberto', 'solucionado'],
+            "O campo 'status' pode ser somente 'aberto' ou 'solucionado'"
+        )
+        .partial(),
+    agente_id: z.string().min(1, "O campo 'agente_id' é obrigatório").partial(),
+});
 
 function getAllCasos(req, res) {
     const agente_id = req.query.agente_id;
@@ -17,7 +30,7 @@ function getCasoById(req, res) {
     const caso = casosRepository.findById(id);
 
     if (!caso) {
-        return res.status(404).send({ messagem: `Não foi possível encontrar o caso de Id: ${id}` });
+        return res.status(404).send({ mensagem: `Não foi possível encontrar o caso de Id: ${id}` });
     }
     res.status(200).json(caso);
 }
@@ -27,7 +40,7 @@ function getAgenteByCaso(req, res) {
 
     const caso = casosRepository.findById(caso_id);
     if (!caso) {
-        return res.status(404).send({ messagem: `Não foi possível encontrar o caso de Id: ${id}` });
+        return res.status(404).send({ mensagem: `Não foi possível encontrar o caso de Id: ${id}` });
     }
 
     const agente_id = caso.agente_id;
@@ -43,70 +56,98 @@ function searchCasos(req, res) {
     res.status(200).send(searchedCasos);
 }
 
-function postCaso(req, res) {
-    const { titulo, descricao, status, agente_id } = req.body;
+function postCaso(req, res, next) {
+    try {
+        const { titulo, descricao, status, agente_id } = casoSchema.parse(req.body);
 
-    if (!titulo || !descricao || !status || !agente_id) {
-        return res.status(400).send({ mensagem: 'Todos os campos são obrigatórios' });
+        if (!agentesRepository.findById(agente_id)) {
+            return res
+                .status(400)
+                .send({ mensagem: `Não foi possível encontrar agente de Id: ${agente_id}` });
+        }
+
+        const createdCasoData = {
+            titulo: titulo,
+            descricao: descricao,
+            status: status,
+            agente_id: agente_id,
+        };
+
+        const createdCaso = casosRepository.create(createdCasoData);
+        res.status(201).json(createdCaso);
+    } catch (error) {
+        return next(error);
     }
-
-    const createdCasoData = {
-        titulo: titulo,
-        descricao: descricao,
-        status: status,
-        agente_id: agente_id,
-    };
-
-    const createdCaso = casosRepository.create(createdCasoData);
-    res.status(201).json(createdCaso);
 }
 
 function updateCaso(req, res) {
-    const id = req.params.id;
-    const { titulo, descricao, status, agente_id } = req.body;
+    try {
+        const id = req.params.id;
+        if (!casosRepository.findById(id)) {
+            return res
+                .status(404)
+                .send({ mensagem: `Não foi possível encontrar o caso de Id: ${id}` });
+        }
 
-    const existingCaso = casosRepository.findById(id);
-    if (!existingCaso) {
-        return res.status(404).send({ mensagem: `Não foi possível encontrar o caso de Id: ${id}` });
+        if ('id' in req.body) {
+            return res
+                .status(400)
+                .send({ mensagem: "Não é permitido atualizar o campo 'id' dos casos" });
+        }
+
+        const { titulo, descricao, status, agente_id } = casoSchema.parse(req.body);
+        if (!agentesRepository.findById(agente_id)) {
+            return res
+                .status(400)
+                .send({ mensagem: `Não foi possível encontrar agente de Id: ${agente_id}` });
+        }
+
+        const updatedCasoData = {
+            titulo,
+            descricao,
+            status,
+            agente_id,
+        };
+
+        const updatedCaso = casosRepository.update(id, updatedCasoData);
+        res.status(200).json(updatedCaso);
+    } catch (error) {
+        return next(error);
     }
-
-    if (!titulo || !descricao || !status || !agente_id) {
-        return res.status(400).send({ mensagem: 'Todos os campos são obrigatórios' });
-    }
-
-    const updatedCasoData = {
-        titulo,
-        descricao,
-        status,
-        agente_id,
-    };
-
-    const updatedCaso = casosRepository.update(id, updatedCasoData);
-    res.status(200).json(updatedCaso);
 }
 
 function patchCaso(req, res) {
-    const id = req.params.id;
-    const existingCaso = casosRepository.findById(id);
+    try {
+        const id = req.params.id;
+        if (!casosRepository.findById(id)) {
+            return res
+                .status(404)
+                .send({ mensagem: `Não foi possível encontrar o caso de Id: ${id}` });
+        }
 
-    if (!existingCaso) {
-        return res.status(404).send({ mensagem: `Não foi possível encontrar o caso de Id: ${id}` });
-    }
-    const { titulo, descricao, status, agente_id } = req.body;
+        if ('id' in req.body) {
+            return res
+                .status(400)
+                .send({ mensagem: "Não é permitido atualizar o campo 'id' dos casos" });
+        }
 
-    if (!titulo && !descricao && !status && !agente_id) {
-        return res.status(400).send({ mensagem: 'Deve-se atualizar pelo menos um campo' });
-    }
+        const { titulo, descricao, status, agente_id } = casoSchema.partial().parse(req.body);
+        if (!agentesRepository.findById(agente_id)) {
+            return res
+                .status(400)
+                .send({ mensagem: `Não foi possível encontrar agente de Id: ${agente_id}` });
+        }
 
-    const patchedCasoData = {
-        titulo: titulo || existingCaso.titulo,
-        descricao: descricao || existingCaso.descricao,
-        status: status || existingCaso.status,
-        agente_id: agente_id || existingCaso.agente_id,
-    };
+        const patchedCasoData = {
+            titulo: titulo ?? existingCaso.titulo,
+            descricao: descricao ?? existingCaso.descricao,
+            status: status ?? existingCaso.status,
+            agente_id: agente_id ?? existingCaso.agente_id,
+        };
 
-    const patchedCaso = casosRepository.update(id, patchedCasoData);
-    res.status(200).json(patchedCaso);
+        const patchedCaso = casosRepository.update(id, patchedCasoData);
+        res.status(200).json(patchedCaso);
+    } catch (error) {}
 }
 
 function deleteCaso(req, res) {
@@ -114,7 +155,7 @@ function deleteCaso(req, res) {
     const caso = casosRepository.findById(id);
 
     if (!caso) {
-        return res.status(404).json({ messagem: `Não foi possível deletar o caso de Id ${id}` });
+        return res.status(404).json({ mensagem: `Não foi possível deletar o caso de Id ${id}` });
     }
 
     casosRepository.remove(id);
