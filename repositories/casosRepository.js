@@ -1,16 +1,16 @@
 const { v4: uuid } = require('uuid');
 const casos = [];
 function findAll(agente_id, status) {
-    let retrieviedCasos = [...casos];
+    let retrievedCasos = [...casos];
 
     if (agente_id) {
-        retrieviedCasos = retrieviedCasos.filter((caso) => caso.agente_id === agente_id);
+        retrievedCasos = retrievedCasos.filter((caso) => caso.agente_id === agente_id);
     }
 
     if (status) {
-        retrieviedCasos = retrieviedCasos.filter((caso) => caso.status === status);
+        retrievedCasos = retrievedCasos.filter((caso) => caso.status === status);
     }
-    return retrieviedCasos;
+    return retrievedCasos;
 }
 
 function findById(id) {
