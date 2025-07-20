@@ -34,7 +34,9 @@ function update(id, updatedCasoData) {
 
 function remove(id) {
     const casoIndex = casos.findIndex((c) => c.id === id);
-    casos.splice(casoIndex, 1);
+    if (casoIndex !== -1) {
+        casos.splice(casoIndex, 1);
+    }
 }
 
 function search(search) {
@@ -49,7 +51,6 @@ function search(search) {
 
     search = search.toLowerCase();
     const filteredCasos = casos.filter((caso) => {
-        console.log(caso);
         return (
             caso.titulo.toLowerCase().includes(search) ||
             caso.descricao.toLowerCase().includes(search)

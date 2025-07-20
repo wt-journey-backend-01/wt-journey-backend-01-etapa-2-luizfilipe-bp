@@ -51,6 +51,9 @@ function getAgenteByCaso(req, res) {
 
 function searchCasos(req, res) {
     const search = req.query.q;
+    if (!search) {
+        return res.status(400).send({ mensagem: "O parâmetro 'q' é obrigatório para busca" });
+    }
 
     const searchedCasos = casosRepository.search(search);
     res.status(200).send(searchedCasos);
@@ -82,17 +85,16 @@ function postCaso(req, res, next) {
 
 function updateCaso(req, res, next) {
     try {
+        if ('id' in req.body) {
+            return res
+                .status(400)
+                .send({ mensagem: "Não é permitido atualizar o campo 'id' dos casos" });
+        }
         const id = req.params.id;
         if (!casosRepository.findById(id)) {
             return res
                 .status(404)
                 .send({ mensagem: `Não foi possível encontrar o caso de Id: ${id}` });
-        }
-
-        if ('id' in req.body) {
-            return res
-                .status(400)
-                .send({ mensagem: "Não é permitido atualizar o campo 'id' dos casos" });
         }
 
         const { titulo, descricao, status, agente_id } = casoSchema.parse(req.body);
@@ -120,16 +122,15 @@ function patchCaso(req, res, next) {
     try {
         const id = req.params.id;
         const caso = casosRepository.findById(id);
-        if (!caso) {
-            return res
-                .status(404)
-                .send({ mensagem: `Não foi possível encontrar o caso de Id: ${id}` });
-        }
-
         if ('id' in req.body) {
             return res
                 .status(400)
                 .send({ mensagem: "Não é permitido atualizar o campo 'id' dos casos" });
+        }
+        if (!caso) {
+            return res
+                .status(404)
+                .send({ mensagem: `Não foi possível encontrar o caso de Id: ${id}` });
         }
 
         const { titulo, descricao, status, agente_id } = casoSchema.partial().parse(req.body);
