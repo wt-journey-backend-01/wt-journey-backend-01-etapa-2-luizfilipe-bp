@@ -1,4 +1,19 @@
 const agentesRepository = require('../repositories/agentesRepository');
+const z = require('zod');
+
+const agenteSchema = z.object({
+    nome: z.string().min(1, "O campo 'nome' é obrigatório"),
+    dataDeIncorporacao: z.iso
+        .date("O campo 'dataDeIncorporacao' deve ser uma data no formato YYYY-MM-DD")
+        .refine(
+            (dataDeIncorporacao) => isValidDataDeIncorporacao(dataDeIncorporacao),
+            'A dataDeIncorporacao não pode ser uma data futura'
+        ),
+    cargo: z.enum(
+        ['inspetor', 'delegado'],
+        "O campo 'cargo' pode ser somente 'inspetor' ou 'delegado'"
+    ),
+});
 
 function getAllAgentes(req, res) {
     const cargo = req.query.cargo;
@@ -18,79 +33,96 @@ function getAgenteById(req, res) {
     if (!agente) {
         return res
             .status(404)
-            .send({ messagem: `Não foi possível encontrar o agente de Id: ${id}` });
+            .send({ mensagem: `Não foi possível encontrar o agente de Id: ${id}` });
     }
 
     res.status(200).json(agente);
 }
 
-function postAgente(req, res) {
-    const { nome, dataDeIncorporacao, cargo } = req.body;
+function isValidDataDeIncorporacao(dataDeIncorporacao) {
+    const date = new Date(dataDeIncorporacao);
+    if (isNaN(date)) return false;
 
-    if (!nome || !dataDeIncorporacao || !cargo) {
-        return res.status(400).send({ mensagem: 'Todos os campos são obrigatórios' });
-    }
-
-    const novoAgenteData = {
-        nome: nome,
-        dataDeIncorporacao: dataDeIncorporacao,
-        cargo: cargo,
-    };
-
-    const createdAgente = agentesRepository.create(novoAgenteData);
-    res.status(201).json(createdAgente);
+    const today = new Date();
+    return date <= today;
 }
 
-function putAgente(req, res) {
-    const id = req.params.id;
-    const { nome, dataDeIncorporacao, cargo } = req.body;
+function postAgente(req, res, next) {
+    try {
+        const { nome, dataDeIncorporacao, cargo } = agenteSchema.parse(req.body);
 
-    const existingAgente = agentesRepository.findById(id);
-    if (!existingAgente) {
-        return res
-            .status(404)
-            .send({ mensagem: `Não foi possível encontrar o agente de Id: ${id}` });
+        const novoAgenteData = {
+            nome: nome,
+            dataDeIncorporacao: dataDeIncorporacao,
+            cargo: cargo,
+        };
+
+        const createdAgente = agentesRepository.create(novoAgenteData);
+        res.status(201).json(createdAgente);
+    } catch (error) {
+        next(error);
     }
-
-    if (!nome || !dataDeIncorporacao || !cargo) {
-        return res.status(400).send({ mensagem: 'Todos os campos são obrigatórios' });
-    }
-
-    const updatedAgenteData = {
-        nome,
-        dataDeIncorporacao,
-        cargo,
-    };
-
-    const updatedAgente = agentesRepository.update(id, updatedAgenteData);
-    res.status(200).json(updatedAgente);
 }
 
-function patchAgente(req, res) {
-    const id = req.params.id;
-    const { nome, dataDeIncorporacao, cargo } = req.body;
+function putAgente(req, res, next) {
+    try {
+        const id = req.params.id;
+        const { nome, dataDeIncorporacao, cargo } = agenteSchema.required().parse(req.body);
 
-    const existingAgente = agentesRepository.findById(id);
-    if (!existingAgente) {
-        return res
-            .status(404)
-            .send({ mensagem: `Não foi possível encontrar o agente de Id: ${id}` });
+        if (!agentesRepository.findById(id)) {
+            return res
+                .status(404)
+                .send({ mensagem: `Não foi possível encontrar o agente de Id: ${id}` });
+        }
+
+        if ('id' in req.body) {
+            return res.status(400).send({
+                mensagem: "Não é permitido atualizar o campo 'id' do agente",
+            });
+        }
+
+        const updatedAgenteData = {
+            nome,
+            dataDeIncorporacao,
+            cargo,
+        };
+
+        const updatedAgente = agentesRepository.update(id, updatedAgenteData);
+        res.status(200).json(updatedAgente);
+    } catch (error) {
+        return next(error);
     }
+}
 
-    if (!nome && !dataDeIncorporacao && !cargo) {
-        return res
-            .status(400)
-            .send({ mensagem: 'É necessário informar pelo menos um campo para atualização' });
+function patchAgente(req, res, next) {
+    try {
+        const id = req.params.id;
+        const { nome, dataDeIncorporacao, cargo } = agenteSchema.partial().parse(req.body);
+
+        const agente = agentesRepository.findById(id);
+        if (!agente) {
+            return res
+                .status(404)
+                .send({ mensagem: `Não foi possível encontrar o agente de Id: ${id}` });
+        }
+
+        if ('id' in req.body) {
+            return res.status(400).send({
+                mensagem: "Não é permitido atualizar o campo 'id' do agente",
+            });
+        }
+
+        const updatedAgenteData = {
+            nome: nome ?? agente.nome,
+            dataDeIncorporacao: dataDeIncorporacao ?? agente.dataDeIncorporacao,
+            cargo: cargo ?? agente.cargo,
+        };
+
+        const updatedAgente = agentesRepository.update(id, updatedAgenteData);
+        res.status(200).json(updatedAgente);
+    } catch (error) {
+        return next(error);
     }
-
-    const updatedAgenteData = {
-        nome: nome || existingAgente.nome,
-        dataDeIncorporacao: dataDeIncorporacao || existingAgente.dataDeIncorporacao,
-        cargo: cargo || existingAgente.cargo,
-    };
-
-    const updatedAgente = agentesRepository.update(id, updatedAgenteData);
-    res.status(200).json(updatedAgente);
 }
 
 function deleteAgente(req, res) {
