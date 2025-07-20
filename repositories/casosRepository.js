@@ -1,16 +1,11 @@
 const { v4: uuid } = require('uuid');
 const casos = [];
 function findAll(agente_id, status) {
-    let retrievedCasos = [...casos];
-
-    if (agente_id) {
-        retrievedCasos = retrievedCasos.filter((caso) => caso.agente_id === agente_id);
-    }
-
-    if (status) {
-        retrievedCasos = retrievedCasos.filter((caso) => caso.status === status);
-    }
-    return retrievedCasos;
+	return casos.filter((caso) => {
+		const filtraPorAgente = agente_id?.trim() ? caso.agente_id === agente_id : true;
+		const filtraPorStatus = status?.trim() ? caso.status === status : true;
+		return filtraPorAgente && filtraPorStatus;
+	});
 }
 
 function findById(id) {
@@ -25,11 +20,11 @@ function create(caso) {
 
 function update(id, updatedCasoData) {
     const casoIndex = casos.findIndex((c) => c.id === id);
-    if (casoIndex === -1) {
-        return null;
+    if (casoIndex !== -1) {
+        casos[casoIndex] = { id: casos[casoIndex].id, ...updatedCasoData };
+        return casos[casoIndex];
     }
-    casos[casoIndex] = { id: casos[casoIndex].id, ...updatedCasoData };
-    return casos[casoIndex];
+    return null;
 }
 
 function remove(id) {
@@ -40,24 +35,16 @@ function remove(id) {
 }
 
 function search(search) {
-    if (!search) {
+    if (!search || !search.trim()) {
         return casos;
     }
 
-    search = search.trim();
-    if (search.length === 0) {
-        return casos;
-    }
+    const terms = search.trim().toLowerCase().split(/\s+/);
 
-    search = search.toLowerCase();
-    const filteredCasos = casos.filter((caso) => {
-        return (
-            caso.titulo.toLowerCase().includes(search) ||
-            caso.descricao.toLowerCase().includes(search)
-        );
+    return casos.filter((caso) => {
+        const text = `${caso.titulo} ${caso.descricao}`.toLowerCase();
+        return terms.every(term => text.includes(term));
     });
-
-    return filteredCasos;
 }
 
 module.exports = {

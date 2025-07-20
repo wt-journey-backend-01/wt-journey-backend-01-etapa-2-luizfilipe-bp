@@ -9,12 +9,10 @@ function findAll(cargo, sort) {
 
     if (sort === 'dataDeIncorporacao' || sort === '-dataDeIncorporacao') {
         retrievedAgentes.sort((a, b) => {
-            const dateA = new Date(a.dataDeIncorporacao);
-            const dateB = new Date(b.dataDeIncorporacao);
             if (sort === '-dataDeIncorporacao') {
-                return dateB - dateA;
+                return b.dataDeIncorporacao.localeCompare(a.dataDeIncorporacao);
             }
-            return dateA - dateB;
+            return a.dataDeIncorporacao.localeCompare(b.dataDeIncorporacao);
         });
     }
     return retrievedAgentes;
@@ -32,11 +30,11 @@ function create(agente) {
 
 function update(id, updatedAgenteData) {
     const agenteIndex = agentes.findIndex((c) => c.id === id);
-    if (agenteIndex === -1) {
-        return null;
+    if (agenteIndex !== -1) {
+        agentes[agenteIndex] = { id: agentes[agenteIndex].id, ...updatedAgenteData };
+        return agentes[agenteIndex];
     }
-    agentes[agenteIndex] = { id: agentes[agenteIndex].id, ...updatedAgenteData };
-    return agentes[agenteIndex];
+    return null;
 }
 
 function remove(id) {

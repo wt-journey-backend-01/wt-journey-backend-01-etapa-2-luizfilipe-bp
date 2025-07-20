@@ -1,19 +1,10 @@
-const { ZodError } = require('zod');
-
 function errorHandler(err, req, res, next) {
-    if (err instanceof ZodError) {
-        const errors = {};
-        for (const issue of err.issues) {
-            const path = issue.path.join('.');
-            if (!(path in errors)) errors[path] = issue.message;
-        }
-        return res.status(400).json({
-            status: 400,
-            message: 'Parâmetros inválidos',
-            errors,
-        });
-    }
-
-    next(err);
+    const status = err.status || 500;
+    res.status(status).json({
+        status: status,
+        mensagem: err.message || 'Erro interno do servidor, tente novamente mais tarde.',
+        errors: err.errors || null,
+    });
 }
+
 module.exports = errorHandler;
