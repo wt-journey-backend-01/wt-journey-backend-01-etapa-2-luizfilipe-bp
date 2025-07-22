@@ -2,20 +2,20 @@ const { v4: uuid } = require('uuid');
 const agentes = [];
 
 function findAll(cargo, sort) {
-    let retrievedAgentes = [...agentes];
-    if (cargo) {
-        retrievedAgentes = agentes.filter((agente) => agente.cargo === cargo);
-    }
+    return agentes
+        .filter((agente) => (cargo?.trim() ? agente.cargo === cargo : true))
+        .sort((a, b) => {
+            const dateA = new Date(a.dataDeIncorporacao);
+            const dateB = new Date(b.dataDeIncorporacao);
 
-    if (sort === 'dataDeIncorporacao' || sort === '-dataDeIncorporacao') {
-        retrievedAgentes.sort((a, b) => {
             if (sort === '-dataDeIncorporacao') {
-                return b.dataDeIncorporacao.localeCompare(a.dataDeIncorporacao);
+                return dateB.getTime() - dateA.getTime();
             }
-            return a.dataDeIncorporacao.localeCompare(b.dataDeIncorporacao);
+            if (sort === 'dataDeIncorporacao') {
+                return dateA.getTime() - dateB.getTime();
+            }
+            return 0;
         });
-    }
-    return retrievedAgentes;
 }
 
 function findById(id) {
