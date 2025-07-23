@@ -1,4 +1,19 @@
 const agentesRepository = require('../repositories/agentesRepository');
+const ApiError = require('../utils/ApiError');
+
+function getAgenteOrThrowApiError(id) {
+    const agente = agentesRepository.findById(id);
+    if (!agente) {
+        throw new ApiError(404, `Não foi possível encontrar o agente de Id: ${id}`);
+    }
+    return agente;
+}
+
+function validateNoIdInBody(req) {
+    if ('id' in req.body) {
+        throw new ApiError(400, 'Não é permitido a alteração de ID');
+    }
+}
 
 function getAllAgentes(req, res) {
     const cargo = req.query.cargo;
@@ -6,56 +21,35 @@ function getAllAgentes(req, res) {
 
     let agentes = agentesRepository.findAll(cargo, sort);
     if (agentes.length === 0) {
-        return res.status(204).send();
+        throw new ApiError(404, 'Nenhum agente foi encontrado');
     }
     res.status(200).json(agentes);
 }
 
 function getAgenteById(req, res) {
     const id = req.params.id;
-    const agente = agentesRepository.findById(id);
-
-    if (!agente) {
-        return res
-            .status(404)
-            .send(`Não foi possível encontrar o agente de Id: ${id}`);
-    }
-
+    const agente = getAgenteOrThrowApiError(id);
     res.status(200).json(agente);
 }
 
 function postAgente(req, res) {
     const { nome, dataDeIncorporacao, cargo } = req.body;
 
-    if (!nome || !dataDeIncorporacao || !cargo) {
-        return res.status(400).send(`Todos os campos são obrigatórios`);
-    }
-
     const novoAgenteData = {
         nome: nome,
         dataDeIncorporacao: dataDeIncorporacao,
         cargo: cargo,
     };
-
     const createdAgente = agentesRepository.create(novoAgenteData);
     res.status(201).json(createdAgente);
 }
 
 function putAgente(req, res) {
+    validateNoIdInBody(req);
     const id = req.params.id;
+    getAgenteOrThrowApiError(id);
+
     const { nome, dataDeIncorporacao, cargo } = req.body;
-
-    const existingAgente = agentesRepository.findById(id);
-    if (!existingAgente) {
-        return res
-            .status(404)
-            .send(`Não foi possível encontrar o agente de Id: ${id}`);
-    }
-
-    if (!nome || !dataDeIncorporacao || !cargo) {
-        return res.status(400).send(`Todos os campos são obrigatórios`);
-    }
-
     const updatedAgenteData = {
         nome,
         dataDeIncorporacao,
@@ -67,20 +61,16 @@ function putAgente(req, res) {
 }
 
 function patchAgente(req, res) {
+    validateNoIdInBody(req);
+
     const id = req.params.id;
+    const agente = getAgenteOrThrowApiError(id);
     const { nome, dataDeIncorporacao, cargo } = req.body;
 
-    const existingAgente = agentesRepository.findById(id);
-    if (!existingAgente) {
-        return res
-            .status(404)
-            .send(`Não foi possível encontrar o agente de Id: ${id}`);
-    }
-
     const updatedAgenteData = {
-        nome: nome ?? existingAgente.nome,
-        dataDeIncorporacao: dataDeIncorporacao ?? existingAgente.dataDeIncorporacao,
-        cargo: cargo ?? existingAgente.cargo,
+        nome: nome ?? agente.nome,
+        dataDeIncorporacao: dataDeIncorporacao ?? agente.dataDeIncorporacao,
+        cargo: cargo ?? agente.cargo,
     };
 
     const updatedAgente = agentesRepository.update(id, updatedAgenteData);
@@ -89,11 +79,7 @@ function patchAgente(req, res) {
 
 function deleteAgente(req, res) {
     const id = req.params.id;
-    const existingAgente = agentesRepository.findById(id);
-
-    if (!existingAgente) {
-        return res.status(404).send(`Não foi possível deletar o agente de Id: ${id}`);
-    }
+    getAgenteOrThrowApiError(id);
 
     agentesRepository.remove(id);
     res.status(204).send();

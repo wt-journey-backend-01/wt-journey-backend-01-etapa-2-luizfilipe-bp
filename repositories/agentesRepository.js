@@ -41,7 +41,9 @@ function remove(id) {
     const agenteIndex = agentes.findIndex((c) => c.id === id);
     if (agenteIndex !== -1) {
         agentes.splice(agenteIndex, 1);
+        return true;
     }
+    return false;
 }
 
 module.exports = {

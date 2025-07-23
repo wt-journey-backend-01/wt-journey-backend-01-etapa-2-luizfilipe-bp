@@ -1,9 +1,12 @@
 function errorHandler(err, req, res, next) {
+    console.error(err);
     const status = err.status || 500;
-    res.status(status).json({
-        status: status,
-        mensagem: err.message || 'Erro interno do servidor, tente novamente mais tarde.',
-        errors: err.errors || null,
+    const message = err.message || 'Erro interno do servidor';
+    const errors = err.errors || {};
+    return res.status(status).json({
+        status,
+        message,
+        errors,
     });
 }
 
