@@ -42,18 +42,13 @@ function getAllAgentes(req, res) {
 function getAgenteById(req, res) {
     const id = req.params.id;
     const agente = getAgenteOrThrowApiError(id);
+    ('');
     res.status(200).json(agente);
 }
 
 function postAgente(req, res) {
-    const { nome, dataDeIncorporacao, cargo } = req.body;
-
-    const novoAgenteData = {
-        nome: nome,
-        dataDeIncorporacao: dataDeIncorporacao,
-        cargo: cargo,
-    };
-    const createdAgente = agentesRepository.create(novoAgenteData);
+    const newAgente = ({ nome, dataDeIncorporacao, cargo } = req.body);
+    const createdAgente = agentesRepository.create(newAgente);
     res.status(201).json(createdAgente);
 }
 
@@ -61,8 +56,8 @@ function putAgente(req, res) {
     const id = req.params.id;
     getAgenteOrThrowApiError(id);
 
-    const { updatedAgenteData } = req.body;
-    const updatedAgente = agentesRepository.update(id, updatedAgenteData);
+    const newAgente = ({ nome, dataDeIncorporacao, cargo } = req.body);
+    const updatedAgente = agentesRepository.update(id, newAgente);
     res.status(200).json(updatedAgente);
 }
 
@@ -70,6 +65,10 @@ function patchAgente(req, res) {
     const id = req.params.id;
     const agente = getAgenteOrThrowApiError(id);
     const { nome, dataDeIncorporacao, cargo } = req.body;
+
+    if (!nome && !dataDeIncorporacao && !cargo) {
+        throw new ApiError(400, 'Deve haver pelo menos um campo para realizar a atualização');
+    }
 
     const updatedAgenteData = {
         nome: nome ?? agente.nome,
@@ -88,6 +87,7 @@ function deleteAgente(req, res) {
     agentesRepository.remove(id);
     res.status(204).send();
 }
+
 module.exports = {
     getAllAgentes,
     getAgenteById,
