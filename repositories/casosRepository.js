@@ -18,9 +18,9 @@ function update(id, updatedCasoData) {
     const casoIndex = casos.findIndex((c) => c.id === id);
     if (casoIndex !== -1) {
         casos[casoIndex] = {
-            ...caso[casoIndex],
+            ...casos[casoIndex],
             ...updatedCasoData,
-            id: caso[casoIndex].id,
+            id: casos[casoIndex].id,
         };
         return casos[casoIndex];
     }

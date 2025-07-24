@@ -6,15 +6,16 @@ const {
     validateCasoPatch,
     validateStatusParam,
 } = require('../utils/casosValidator');
+const { validateIdParam, validateCasoIdParam } = require('../utils/validateIdParam');
 
 router.get('/search', casosController.searchCasos);
-router.get('/:caso_id/agente', casosController.getAgenteByCaso);
+router.get('/:caso_id/agente', validateCasoIdParam, casosController.getAgenteByCaso);
 
 router.get('/', validateStatusParam, casosController.getAllCasos);
-router.get('/:id', casosController.getCasoById);
+router.get('/:id', validateIdParam, casosController.getCasoById);
 router.post('/', validateCasoCreate, casosController.postCaso);
-router.put('/:id', validateCasoCreate, casosController.updateCaso);
-router.patch('/:id', validateCasoPatch, casosController.patchCaso);
-router.delete('/:id', casosController.deleteCaso);
+router.put('/:id', validateIdParam, validateCasoCreate, casosController.updateCaso);
+router.patch('/:id', validateIdParam, validateCasoPatch, casosController.patchCaso);
+router.delete('/:id', validateIdParam, casosController.deleteCaso);
 
 module.exports = router;

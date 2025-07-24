@@ -42,7 +42,6 @@ function getAllAgentes(req, res) {
 function getAgenteById(req, res) {
     const id = req.params.id;
     const agente = getAgenteOrThrowApiError(id);
-    ('');
     res.status(200).json(agente);
 }
 

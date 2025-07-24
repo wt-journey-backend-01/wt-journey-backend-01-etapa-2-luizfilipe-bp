@@ -46,6 +46,7 @@ const validateStatusParam = [
         .optional()
         .isIn(['aberto', 'solucionado'])
         .withMessage("O parâmetro 'status' deve ser 'aberto' ou 'solucionado'"),
+    validationHandler,
 ];
 
 module.exports = {

@@ -78,7 +78,7 @@ function updateCaso(req, res) {
     getCasoOrThrowApiError(id);
 
     const { titulo, descricao, status, agente_id } = req.body;
-    getAgenteOrThrowApiError(updatedCasoData.agente_id);
+    getAgenteOrThrowApiError(agente_id);
 
     const updatedCasoData = {
         titulo,
@@ -109,7 +109,7 @@ function patchCaso(req, res) {
 
 function deleteCaso(req, res) {
     const id = req.params.id;
-    getAgenteOrThrowApiError(id);
+    getCasoOrThrowApiError(id);
 
     casosRepository.remove(id);
     res.status(204).send();
