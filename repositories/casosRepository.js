@@ -1,11 +1,7 @@
 const { v4: uuid } = require('uuid');
 const casos = [];
-function findAll(agente_id, status) {
-	return casos.filter((caso) => {
-		const filtraPorAgente = agente_id?.trim() ? caso.agente_id === agente_id : true;
-		const filtraPorStatus = status?.trim() ? caso.status === status : true;
-		return filtraPorAgente && filtraPorStatus;
-	});
+function findAll() {
+    return casos;
 }
 
 function findById(id) {
@@ -21,7 +17,11 @@ function create(caso) {
 function update(id, updatedCasoData) {
     const casoIndex = casos.findIndex((c) => c.id === id);
     if (casoIndex !== -1) {
-        casos[casoIndex] = { id: casos[casoIndex].id, ...updatedCasoData };
+        casos[casoIndex] = {
+            ...caso[casoIndex],
+            ...updatedCasoData,
+            id: caso[casoIndex].id,
+        };
         return casos[casoIndex];
     }
     return null;
@@ -31,19 +31,16 @@ function remove(id) {
     const casoIndex = casos.findIndex((c) => c.id === id);
     if (casoIndex !== -1) {
         casos.splice(casoIndex, 1);
+        return true;
     }
+    return false;
 }
 
 function search(search) {
-    if (!search || !search.trim()) {
-        return casos;
-    }
-
     const terms = search.trim().toLowerCase().split(/\s+/);
-
     return casos.filter((caso) => {
         const text = `${caso.titulo} ${caso.descricao}`.toLowerCase();
-        return terms.every(term => text.includes(term));
+        return terms.every((term) => text.includes(term));
     });
 }
 
