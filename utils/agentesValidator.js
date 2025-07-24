@@ -10,8 +10,8 @@ const rejectFutureDate = (date) => {
 };
 
 const validateAgenteCreate = [
+    body('id').not().exists().withMessage('Não é permitido a alteração de id'),
     body('nome').notEmpty().withMessage("O campo 'nome' é obrigatório"),
-
     body('dataDeIncorporacao')
         .notEmpty()
         .withMessage("O campo 'dataDeIncorporacao' é obrigatório")
@@ -19,7 +19,6 @@ const validateAgenteCreate = [
         .withMessage("Campo 'dataDeIncorporacao' deve ser no formato 'YYYY-MM-DD'")
         .bail()
         .custom(rejectFutureDate),
-
     body('cargo')
         .notEmpty()
         .withMessage("O campo 'cargo' é obrigatório")
@@ -30,8 +29,8 @@ const validateAgenteCreate = [
 ];
 
 const validateAgentePatch = [
+    body('id').not().exists().withMessage('Não é permitido a alteração de id'),
     body('nome').optional().notEmpty().withMessage("O campo 'nome' não pode ser vazio"),
-
     body('dataDeIncorporacao')
         .optional()
         .notEmpty()
@@ -40,7 +39,6 @@ const validateAgentePatch = [
         .withMessage("Campo 'dataDeIncorporacao' deve ser no formato 'YYYY-MM-DD'")
         .bail()
         .custom(rejectFutureDate),
-
     body('cargo')
         .optional()
         .notEmpty()
