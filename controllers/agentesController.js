@@ -4,24 +4,37 @@ const ApiError = require('../utils/ApiError');
 function getAgenteOrThrowApiError(id) {
     const agente = agentesRepository.findById(id);
     if (!agente) {
-        throw new ApiError(404, `Não foi possível encontrar o agente de Id: ${id}`);
+        throw new ApiError(404, `Não foi possível encontrar o agente de Id: ${id}.`);
     }
     return agente;
-}
-
-function validateNoIdInBody(req) {
-    if ('id' in req.body) {
-        throw new ApiError(400, 'Não é permitido a alteração de ID');
-    }
 }
 
 function getAllAgentes(req, res) {
     const cargo = req.query.cargo;
     const sort = req.query.sort;
 
-    let agentes = agentesRepository.findAll(cargo, sort);
-    if (agentes.length === 0) {
-        throw new ApiError(404, 'Nenhum agente foi encontrado');
+    let agentes = agentesRepository.findAll();
+
+    if (cargo) {
+        agentes = agentes.filter((agente) => agente.cargo === cargo);
+        if (agentes.length === 0) {
+            throw new ApiError(404, `Nenhum agente de 'cargo' ${cargo} foi encontrado.`);
+        }
+    }
+
+    if (sort && (sort === 'dataDeIncorporacao' || sort === '-dataDeIncorporacao')) {
+        agentes = agentes.sort((a, b) => {
+            const dateA = new Date(a.dataDeIncorporacao);
+            const dateB = new Date(b.dataDeIncorporacao);
+
+            if (sort === '-dataDeIncorporacao') {
+                return dateB.getTime() - dateA.getTime();
+            }
+            if (sort === 'dataDeIncorporacao') {
+                return dateA.getTime() - dateB.getTime();
+            }
+            return 0;
+        });
     }
     res.status(200).json(agentes);
 }
@@ -45,24 +58,15 @@ function postAgente(req, res) {
 }
 
 function putAgente(req, res) {
-    validateNoIdInBody(req);
     const id = req.params.id;
     getAgenteOrThrowApiError(id);
 
-    const { nome, dataDeIncorporacao, cargo } = req.body;
-    const updatedAgenteData = {
-        nome,
-        dataDeIncorporacao,
-        cargo,
-    };
-
+    const { updatedAgenteData } = req.body;
     const updatedAgente = agentesRepository.update(id, updatedAgenteData);
     res.status(200).json(updatedAgente);
 }
 
 function patchAgente(req, res) {
-    validateNoIdInBody(req);
-
     const id = req.params.id;
     const agente = getAgenteOrThrowApiError(id);
     const { nome, dataDeIncorporacao, cargo } = req.body;
@@ -91,4 +95,5 @@ module.exports = {
     putAgente,
     patchAgente,
     deleteAgente,
+    getAgenteOrThrowApiError,
 };

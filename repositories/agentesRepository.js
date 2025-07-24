@@ -1,21 +1,8 @@
 const { v4: uuid } = require('uuid');
 const agentes = [];
 
-function findAll(cargo, sort) {
-    return agentes
-        .filter((agente) => (cargo?.trim() ? agente.cargo === cargo : true))
-        .sort((a, b) => {
-            const dateA = new Date(a.dataDeIncorporacao);
-            const dateB = new Date(b.dataDeIncorporacao);
-
-            if (sort === '-dataDeIncorporacao') {
-                return dateB.getTime() - dateA.getTime();
-            }
-            if (sort === 'dataDeIncorporacao') {
-                return dateA.getTime() - dateB.getTime();
-            }
-            return 0;
-        });
+function findAll() {
+    return agentes;
 }
 
 function findById(id) {
@@ -29,9 +16,16 @@ function create(agente) {
 }
 
 function update(id, updatedAgenteData) {
+    if (updatedAgenteData.id) {
+        delete updatedAgenteData.id;
+    }
     const agenteIndex = agentes.findIndex((c) => c.id === id);
     if (agenteIndex !== -1) {
-        agentes[agenteIndex] = { id: agentes[agenteIndex].id, ...updatedAgenteData };
+        agentes[agenteIndex] = {
+            ...agentes[agenteIndex],
+            ...updatedAgenteData,
+            id: agentes[agenteIndex].id,
+        };
         return agentes[agenteIndex];
     }
     return null;
