@@ -22,7 +22,7 @@ function getAllAgentes(req, res) {
         }
     }
 
-    if (sort && (sort === 'dataDeIncorporacao' || sort === '-dataDeIncorporacao')) {
+    if (sort === 'dataDeIncorporacao' || sort === '-dataDeIncorporacao') {
         agentes = agentes.sort((a, b) => {
             const dateA = new Date(a.dataDeIncorporacao);
             const dateB = new Date(b.dataDeIncorporacao);
