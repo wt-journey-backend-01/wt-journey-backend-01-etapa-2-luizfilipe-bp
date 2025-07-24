@@ -1,4 +1,4 @@
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
 const { validationHandler } = require('./validationHandler');
 
 const validateCasoCreate = [
@@ -41,7 +41,15 @@ const validateCasoPatch = [
     validationHandler,
 ];
 
+const validateStatusParam = [
+    param('status')
+        .optional()
+        .isIn(['aberto', 'solucionado'])
+        .withMessage("O parâmetro 'status' deve ser 'aberto' ou 'solucionado'"),
+];
+
 module.exports = {
     validateCasoCreate,
     validateCasoPatch,
+    validateStatusParam,
 };
