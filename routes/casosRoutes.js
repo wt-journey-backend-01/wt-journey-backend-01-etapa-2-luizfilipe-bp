@@ -269,7 +269,7 @@ router.patch(
  *           type: string
  *           format: uuid
  *     responses:
- *       200:
+ *       204:
  *         description: Caso deletado com sucesso
  *       404:
  *         description: Caso não encontrado

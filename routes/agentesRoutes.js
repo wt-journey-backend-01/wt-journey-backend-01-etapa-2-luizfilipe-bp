@@ -10,6 +10,8 @@ const {
     idParamSchema,
 } = require('../utils/schemaValidator');
 
+const { validateIdParam } = require('../utils/validateIdParam');
+
 /**
  * @swagger
  * tags:
@@ -70,7 +72,7 @@ router.get('/', validateSchema(agentesFilterSchema, 'query'), agentesController.
  *       500:
  *         description: Erro interno do servidor ao tentar buscar o agente
  */
-router.get('/:id', validateSchema(idParamSchema, 'params'), agentesController.getAgenteById);
+router.get('/:id', validateIdParam(idParamSchema), agentesController.getAgenteById);
 
 /**
  * @swagger
@@ -143,7 +145,7 @@ router.post('/', validateSchema(agentesPostSchema, 'body'), agentesController.po
  */
 router.put(
     '/:id',
-    validateSchema(idParamSchema, 'params'),
+    validateIdParam(idParamSchema),
     validateSchema(agentesPutSchema, 'body'),
     agentesController.putAgente
 );
@@ -187,7 +189,7 @@ router.put(
  */
 router.patch(
     '/:id',
-    validateSchema(idParamSchema, 'params'),
+    validateIdParam(idParamSchema),
     validateSchema(agentesPatchSchema, 'body'),
     agentesController.patchAgente
 );
@@ -213,6 +215,6 @@ router.patch(
  *       500:
  *         description: Erro interno do servidor ao tentar deletar o agente
  */
-router.delete('/:id', validateSchema(idParamSchema, 'params'), agentesController.deleteAgente);
+router.delete('/:id', validateIdParam(idParamSchema), agentesController.deleteAgente);
 
 module.exports = router;

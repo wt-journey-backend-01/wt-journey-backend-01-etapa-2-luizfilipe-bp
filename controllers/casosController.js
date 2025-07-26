@@ -88,7 +88,7 @@ function postCaso(req, res) {
 
 function updateCaso(req, res) {
     const id = req.params.id;
-    if (!casosRepository.findBy(id)) {
+    if (!casosRepository.findById(id)) {
         return res.status(404).json({
             message: `Não foi possível encontrar o caso de Id: ${id}.`,
         });
