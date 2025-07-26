@@ -1,5 +1,9 @@
 const agentesRepository = require('../repositories/agentesRepository');
 
+function dateFormatIsValid(dateString) {
+    return /^\d{4}-\d{2}-\d{2}$/.test(dateString);
+}
+
 function getAllAgentes(req, res) {
     const cargo = req.query.cargo;
     const sort = req.query.sort;
@@ -22,8 +26,7 @@ function getAllAgentes(req, res) {
 
             if (sort === '-dataDeIncorporacao') {
                 return dateB.getTime() - dateA.getTime();
-            }
-            if (sort === 'dataDeIncorporacao') {
+            } else if (sort === 'dataDeIncorporacao') {
                 return dateA.getTime() - dateB.getTime();
             }
             return 0;
@@ -44,27 +47,95 @@ function getAgenteById(req, res) {
 }
 
 function postAgente(req, res) {
-    const newAgente = ({ nome, dataDeIncorporacao, cargo } = req.body);
-    const createdAgente = agentesRepository.create(newAgente);
+    const { nome, dataDeIncorporacao, cargo } = req.body;
+    if (!nome || !dataDeIncorporacao || !cargo) {
+        return res.status(400).json({
+            message:
+                'Os campos nome, dataDeIncorporacao e cargo são obrigatórios para adicionar um agente.',
+        });
+    }
+
+    if (!dateFormatIsValid(dataDeIncorporacao)) {
+        return res.status(400).json({
+            message: "O campo 'dataDeIncorporacao' deve estar no formato 'YYYY-MM-DD'.",
+        });
+    }
+    if (isNaN(data.getTime())) {
+        return res.status(400).json({
+            message: "O campo 'dataDeIncorporacao' deve ser uma data válida.",
+        });
+    }
+    if (new Date(dataDeIncorporacao) > new Date()) {
+        return res.status(400).json({
+            message: "O campo 'dataDeIncorporacao' não pode ser uma data futura.",
+        });
+    }
+
+    const newAgenteData = {
+        nome,
+        dataDeIncorporacao,
+        cargo,
+    };
+
+    const createdAgente = agentesRepository.create(newAgenteData);
     res.status(201).json(createdAgente);
 }
 
 function putAgente(req, res) {
+    if ('id' in req.body) {
+        return res.status(400).json({
+            message: "O campo 'id' não pode ser atualizado.",
+        });
+    }
+
     const id = req.params.id;
     const agente = agentesRepository.findById(id);
-
     if (!agente) {
         return res.status(404).json({
             message: `Não foi possível encontrar o agente de Id: ${id}.`,
         });
     }
 
-    const updateAgenteData = ({ nome, dataDeIncorporacao, cargo } = req.body);
-    const updatedAgente = agentesRepository.update(id, updateAgenteData);
+    const { nome, dataDeIncorporacao, cargo } = req.body;
+    if (!nome || !dataDeIncorporacao || !cargo) {
+        return res.status(400).json({
+            message:
+                'Os campos nome, dataDeIncorporacao e cargo são obrigatórios para atualizar um agente.',
+        });
+    }
+
+    if (!dateFormatIsValid(dataDeIncorporacao)) {
+        return res.status(400).json({
+            message: "O campo 'dataDeIncorporacao' deve estar no formato 'YYYY-MM-DD'.",
+        });
+    }
+    if (isNaN(data.getTime())) {
+        return res.status(400).json({
+            message: "O campo 'dataDeIncorporacao' deve ser uma data válida.",
+        });
+    }
+    if (new Date(dataDeIncorporacao) > new Date()) {
+        return res.status(400).json({
+            message: "O campo 'dataDeIncorporacao' não pode ser uma data futura.",
+        });
+    }
+
+    const updatedAgenteData = {
+        nome,
+        dataDeIncorporacao,
+        cargo,
+    };
+    const updatedAgente = agentesRepository.update(id, updatedAgenteData);
     res.status(200).json(updatedAgente);
 }
 
 function patchAgente(req, res) {
+    if ('id' in req.body) {
+        return res.status(400).json({
+            message: "O campo 'id' não pode ser atualizado.",
+        });
+    }
+
     const id = req.params.id;
     const agente = agentesRepository.findById(id);
     if (!agente) {
@@ -78,6 +149,24 @@ function patchAgente(req, res) {
         return res.status(400).json({
             message: 'Deve haver pelo menos um campo para realizar a atualização de agente',
         });
+    }
+
+    if (dataDeIncorporacao !== undefined) {
+        if (!dateFormatIsValid(dataDeIncorporacao)) {
+            return res.status(400).json({
+                message: "O campo 'dataDeIncorporacao' deve estar no formato 'YYYY-MM-DD'.",
+            });
+        }
+        if (isNaN(data.getTime())) {
+            return res.status(400).json({
+                message: "O campo 'dataDeIncorporacao' deve ser uma data válida.",
+            });
+        }
+        if (new Date(dataDeIncorporacao) > new Date()) {
+            return res.status(400).json({
+                message: "O campo 'dataDeIncorporacao' não pode ser uma data futura.",
+            });
+        }
     }
 
     const updatedAgenteData = {

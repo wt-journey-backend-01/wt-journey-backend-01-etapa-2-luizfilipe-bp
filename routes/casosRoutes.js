@@ -1,14 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const casosController = require('../controllers/casosController');
-const { validateSchema } = require('../utils/validateSchema');
-const {
-    casosPostSchema,
-    casosPutSchema,
-    casosPatchSchema,
-    casosFilterSchema,
-    idParamSchema,
-} = require('../utils/schemaValidator');
 
 /**
  * @swagger
@@ -64,7 +56,7 @@ router.get('/search', casosController.searchCasos);
  *       500:
  *         description: Erro interno do servidor ao tentar buscar o agente associado ao caso
  */
-router.get('/:id/agente', validateSchema(idParamSchema, 'params'), casosController.getAgenteByCaso);
+router.get('/:id/agente', casosController.getAgenteByCaso);
 
 /**
  * @swagger
@@ -97,7 +89,7 @@ router.get('/:id/agente', validateSchema(idParamSchema, 'params'), casosControll
  *       500:
  *         description: Erro interno do servidor ao tentar buscar os casos
  */
-router.get('/', validateSchema(casosFilterSchema, 'query'), casosController.getAllCasos);
+router.get('/', casosController.getAllCasos);
 
 /**
  * @swagger
@@ -120,7 +112,7 @@ router.get('/', validateSchema(casosFilterSchema, 'query'), casosController.getA
  *       500:
  *         description: Erro interno do servidor ao tentar buscar o caso
  */
-router.get('/:id', validateSchema(idParamSchema, 'params'), casosController.getCasoById);
+router.get('/:id', casosController.getCasoById);
 
 /**
  * @swagger
@@ -158,7 +150,7 @@ router.get('/:id', validateSchema(idParamSchema, 'params'), casosController.getC
  *       500:
  *         description: Erro interno do servidor ao tentar criar o caso
  */
-router.post('/', validateSchema(casosPostSchema, 'body'), casosController.postCaso);
+router.post('/', casosController.postCaso);
 
 /**
  * @swagger
@@ -201,12 +193,7 @@ router.post('/', validateSchema(casosPostSchema, 'body'), casosController.postCa
  *       500:
  *         description: Erro interno do servidor ao tentar atualizar o caso
  */
-router.put(
-    '/:id',
-    validateSchema(idParamSchema, 'params'),
-    validateSchema(casosPutSchema, 'body'),
-    casosController.updateCaso
-);
+router.put('/:id', casosController.updateCaso);
 
 /**
  * @swagger
@@ -248,12 +235,7 @@ router.put(
  *       500:
  *         description: Erro interno do servidor ao tentar atualizar o caso
  */
-router.patch(
-    '/:id',
-    validateSchema(idParamSchema, 'params'),
-    validateSchema(casosPatchSchema, 'body'),
-    casosController.patchCaso
-);
+router.patch('/:id', casosController.patchCaso);
 
 /**
  * @swagger
@@ -276,6 +258,6 @@ router.patch(
  *       500:
  *         description: Erro interno do servidor ao tentar deletar o caso
  */
-router.delete('/:id', validateSchema(idParamSchema, 'params'), casosController.deleteCaso);
+router.delete('/:id', casosController.deleteCaso);
 
 module.exports = router;

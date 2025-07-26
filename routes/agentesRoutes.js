@@ -1,16 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const agentesController = require('../controllers/agentesController');
-const { validateSchema } = require('../utils/validateSchema');
-const {
-    agentesPostSchema,
-    agentesPutSchema,
-    agentesPatchSchema,
-    agentesFilterSchema,
-    idParamSchema,
-} = require('../utils/schemaValidator');
-
-const { validateIdParam } = require('../utils/validateIdParam');
 
 /**
  * @swagger
@@ -49,7 +39,7 @@ const { validateIdParam } = require('../utils/validateIdParam');
  *       500:
  *         description: Erro interno do servidor ao tentar buscar os agentes
  */
-router.get('/', validateSchema(agentesFilterSchema, 'query'), agentesController.getAllAgentes);
+router.get('/', agentesController.getAllAgentes);
 
 /**
  * @swagger
@@ -72,7 +62,7 @@ router.get('/', validateSchema(agentesFilterSchema, 'query'), agentesController.
  *       500:
  *         description: Erro interno do servidor ao tentar buscar o agente
  */
-router.get('/:id', validateIdParam(idParamSchema), agentesController.getAgenteById);
+router.get('/:id', agentesController.getAgenteById);
 
 /**
  * @swagger
@@ -103,7 +93,7 @@ router.get('/:id', validateIdParam(idParamSchema), agentesController.getAgenteBy
  *       500:
  *         description: Erro interno do servidor ao tentar criar o agente
  */
-router.post('/', validateSchema(agentesPostSchema, 'body'), agentesController.postAgente);
+router.post('/', agentesController.postAgente);
 
 /**
  * @swagger
@@ -143,12 +133,7 @@ router.post('/', validateSchema(agentesPostSchema, 'body'), agentesController.po
  *       500:
  *         description: Erro interno do servidor ao tentar atualizar o agente
  */
-router.put(
-    '/:id',
-    validateIdParam(idParamSchema),
-    validateSchema(agentesPutSchema, 'body'),
-    agentesController.putAgente
-);
+router.put('/:id', agentesController.putAgente);
 
 /**
  * @swagger
@@ -187,12 +172,7 @@ router.put(
  *       500:
  *         description: Erro interno do servidor ao tentar atualizar o agente
  */
-router.patch(
-    '/:id',
-    validateIdParam(idParamSchema),
-    validateSchema(agentesPatchSchema, 'body'),
-    agentesController.patchAgente
-);
+router.patch('/:id', agentesController.patchAgente);
 
 /**
  * @swagger
@@ -215,6 +195,6 @@ router.patch(
  *       500:
  *         description: Erro interno do servidor ao tentar deletar o agente
  */
-router.delete('/:id', validateIdParam(idParamSchema), agentesController.deleteAgente);
+router.delete('/:id', agentesController.deleteAgente);
 
 module.exports = router;
