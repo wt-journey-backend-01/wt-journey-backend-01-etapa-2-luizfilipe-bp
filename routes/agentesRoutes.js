@@ -2,6 +2,12 @@ const express = require('express');
 const router = express.Router();
 const agentesController = require('../controllers/agentesController');
 const validateUUIDParam = require('../utils/validateUUIDParam');
+const {
+    agentesPostSchema,
+    agentesPutSchema,
+    agentesPatchSchema,
+} = require('../utils/schemaValidator');
+const { validateSchema } = require('../utils/validateSchema');
 /**
  * @swagger
  * tags:
@@ -93,7 +99,7 @@ router.get('/:id', validateUUIDParam, agentesController.getAgenteById);
  *       500:
  *         description: Erro interno do servidor ao tentar criar o agente
  */
-router.post('/', agentesController.postAgente);
+router.post('/', validateSchema(agentesPostSchema), agentesController.postAgente);
 
 /**
  * @swagger
@@ -133,7 +139,12 @@ router.post('/', agentesController.postAgente);
  *       500:
  *         description: Erro interno do servidor ao tentar atualizar o agente
  */
-router.put('/:id', validateUUIDParam, agentesController.putAgente);
+router.put(
+    '/:id',
+    validateUUIDParam,
+    validateSchema(agentesPutSchema),
+    agentesController.putAgente
+);
 
 /**
  * @swagger
@@ -172,7 +183,12 @@ router.put('/:id', validateUUIDParam, agentesController.putAgente);
  *       500:
  *         description: Erro interno do servidor ao tentar atualizar o agente
  */
-router.patch('/:id', validateUUIDParam, agentesController.patchAgente);
+router.patch(
+    '/:id',
+    validateUUIDParam,
+    validateSchema(agentesPatchSchema),
+    agentesController.patchAgente
+);
 
 /**
  * @swagger

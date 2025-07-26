@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const casosController = require('../controllers/casosController');
 const validateUUIDParam = require('../utils/validateUUIDParam');
+const { casosPostSchema, casosPutSchema, casosPatchSchema } = require('../utils/schemaValidator');
+const { validateSchema } = require('../utils/validateSchema');
 
 /**
  * @swagger
@@ -151,7 +153,7 @@ router.get('/:id', validateUUIDParam, casosController.getCasoById);
  *       500:
  *         description: Erro interno do servidor ao tentar criar o caso
  */
-router.post('/', casosController.postCaso);
+router.post('/', validateSchema(casosPostSchema), casosController.postCaso);
 
 /**
  * @swagger
@@ -194,7 +196,7 @@ router.post('/', casosController.postCaso);
  *       500:
  *         description: Erro interno do servidor ao tentar atualizar o caso
  */
-router.put('/:id', validateUUIDParam, casosController.updateCaso);
+router.put('/:id', validateUUIDParam, validateSchema(casosPutSchema), casosController.updateCaso);
 
 /**
  * @swagger
@@ -236,7 +238,12 @@ router.put('/:id', validateUUIDParam, casosController.updateCaso);
  *       500:
  *         description: Erro interno do servidor ao tentar atualizar o caso
  */
-router.patch('/:id', validateUUIDParam, casosController.patchCaso);
+router.patch(
+    '/:id',
+    validateUUIDParam,
+    validateSchema(casosPatchSchema),
+    casosController.patchCaso
+);
 
 /**
  * @swagger
