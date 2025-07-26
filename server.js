@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const setupSwagger = require('./docs/swagger');
 
 app.use(express.json());
 
@@ -8,6 +9,8 @@ app.use('/casos', casosRouter);
 
 const agentesRouter = require('./routes/agentesRoutes');
 app.use('/agentes', agentesRouter);
+
+setupSwagger(app);
 
 const PORT = 3000;
 app.listen(PORT, () => {
