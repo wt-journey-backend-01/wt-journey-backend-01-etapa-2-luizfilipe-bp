@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const casosController = require('../controllers/casosController');
+const validateUUIDParam = require('../utils/validateUUIDParam');
 
 /**
  * @swagger
@@ -56,7 +57,7 @@ router.get('/search', casosController.searchCasos);
  *       500:
  *         description: Erro interno do servidor ao tentar buscar o agente associado ao caso
  */
-router.get('/:id/agente', casosController.getAgenteByCaso);
+router.get('/:id/agente', validateUUIDParam, casosController.getAgenteByCaso);
 
 /**
  * @swagger
@@ -112,7 +113,7 @@ router.get('/', casosController.getAllCasos);
  *       500:
  *         description: Erro interno do servidor ao tentar buscar o caso
  */
-router.get('/:id', casosController.getCasoById);
+router.get('/:id', validateUUIDParam, casosController.getCasoById);
 
 /**
  * @swagger
@@ -193,7 +194,7 @@ router.post('/', casosController.postCaso);
  *       500:
  *         description: Erro interno do servidor ao tentar atualizar o caso
  */
-router.put('/:id', casosController.updateCaso);
+router.put('/:id', validateUUIDParam, casosController.updateCaso);
 
 /**
  * @swagger
@@ -235,7 +236,7 @@ router.put('/:id', casosController.updateCaso);
  *       500:
  *         description: Erro interno do servidor ao tentar atualizar o caso
  */
-router.patch('/:id', casosController.patchCaso);
+router.patch('/:id', validateUUIDParam, casosController.patchCaso);
 
 /**
  * @swagger
@@ -258,6 +259,6 @@ router.patch('/:id', casosController.patchCaso);
  *       500:
  *         description: Erro interno do servidor ao tentar deletar o caso
  */
-router.delete('/:id', casosController.deleteCaso);
+router.delete('/:id', validateUUIDParam, casosController.deleteCaso);
 
 module.exports = router;

@@ -20,16 +20,10 @@ function getAllAgentes(req, res) {
     }
 
     if (sort === 'dataDeIncorporacao' || sort === '-dataDeIncorporacao') {
-        agentes = agentes.sort((a, b) => {
-            const dateA = new Date(a.dataDeIncorporacao);
-            const dateB = new Date(b.dataDeIncorporacao);
-
-            if (sort === '-dataDeIncorporacao') {
-                return dateB.getTime() - dateA.getTime();
-            } else if (sort === 'dataDeIncorporacao') {
-                return dateA.getTime() - dateB.getTime();
-            }
-            return 0;
+        agentes.sort((a, b) => {
+            const dateA = new Date(a.dataDeIncorporacao).getTime();
+            const dateB = new Date(b.dataDeIncorporacao).getTime();
+            return sort === 'dataDeIncorporacao' ? dateA - dateB : dateB - dateA;
         });
     }
     res.status(200).json(agentes);
@@ -60,12 +54,13 @@ function postAgente(req, res) {
             message: "O campo 'dataDeIncorporacao' deve estar no formato 'YYYY-MM-DD'.",
         });
     }
+    const data = new Date(dataDeIncorporacao);
     if (isNaN(data.getTime())) {
         return res.status(400).json({
             message: "O campo 'dataDeIncorporacao' deve ser uma data válida.",
         });
     }
-    if (new Date(dataDeIncorporacao) > new Date()) {
+    if (data > new Date()) {
         return res.status(400).json({
             message: "O campo 'dataDeIncorporacao' não pode ser uma data futura.",
         });
@@ -109,6 +104,7 @@ function putAgente(req, res) {
             message: "O campo 'dataDeIncorporacao' deve estar no formato 'YYYY-MM-DD'.",
         });
     }
+    const data = new Date(dataDeIncorporacao);
     if (isNaN(data.getTime())) {
         return res.status(400).json({
             message: "O campo 'dataDeIncorporacao' deve ser uma data válida.",
@@ -157,6 +153,7 @@ function patchAgente(req, res) {
                 message: "O campo 'dataDeIncorporacao' deve estar no formato 'YYYY-MM-DD'.",
             });
         }
+        const data = new Date(dataDeIncorporacao);
         if (isNaN(data.getTime())) {
             return res.status(400).json({
                 message: "O campo 'dataDeIncorporacao' deve ser uma data válida.",

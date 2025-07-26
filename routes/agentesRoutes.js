@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const agentesController = require('../controllers/agentesController');
-
+const validateUUIDParam = require('../utils/validateUUIDParam');
 /**
  * @swagger
  * tags:
@@ -62,7 +62,7 @@ router.get('/', agentesController.getAllAgentes);
  *       500:
  *         description: Erro interno do servidor ao tentar buscar o agente
  */
-router.get('/:id', agentesController.getAgenteById);
+router.get('/:id', validateUUIDParam, agentesController.getAgenteById);
 
 /**
  * @swagger
@@ -133,7 +133,7 @@ router.post('/', agentesController.postAgente);
  *       500:
  *         description: Erro interno do servidor ao tentar atualizar o agente
  */
-router.put('/:id', agentesController.putAgente);
+router.put('/:id', validateUUIDParam, agentesController.putAgente);
 
 /**
  * @swagger
@@ -172,7 +172,7 @@ router.put('/:id', agentesController.putAgente);
  *       500:
  *         description: Erro interno do servidor ao tentar atualizar o agente
  */
-router.patch('/:id', agentesController.patchAgente);
+router.patch('/:id', validateUUIDParam, agentesController.patchAgente);
 
 /**
  * @swagger
@@ -195,6 +195,6 @@ router.patch('/:id', agentesController.patchAgente);
  *       500:
  *         description: Erro interno do servidor ao tentar deletar o agente
  */
-router.delete('/:id', agentesController.deleteAgente);
+router.delete('/:id', validateUUIDParam, agentesController.deleteAgente);
 
 module.exports = router;
