@@ -1,13 +1,30 @@
 const express = require('express');
 const router = express.Router();
 const agentesController = require('../controllers/agentesController');
-const { validateAgenteCreate, validateAgentePatch } = require('../utils/agentesValidator');
-const { validateIdParam } = require('../utils/validateIdParam');
-router.get('/', agentesController.getAllAgentes);
-router.get('/:id', validateIdParam, agentesController.getAgenteById);
-router.post('/', validateAgenteCreate, agentesController.postAgente);
-router.put('/:id', validateIdParam, validateAgenteCreate, agentesController.putAgente);
-router.patch('/:id', validateIdParam, validateAgentePatch, agentesController.patchAgente);
-router.delete('/:id', validateIdParam, agentesController.deleteAgente);
+const { validateSchema } = require('../utils/validateSchema');
+const {
+    agentesPostSchema,
+    agentesPutSchema,
+    agentesPatchSchema,
+    agentesFilterSchema,
+    idParamSchema,
+} = require('../utils/schemaValidator');
+
+router.get('/', validateSchema(agentesFilterSchema, 'query'), agentesController.getAllAgentes);
+router.get('/:id', validateSchema(idParamSchema, 'params'), agentesController.getAgenteById);
+router.post('/', validateSchema(agentesPostSchema, 'body'), agentesController.postAgente);
+router.put(
+    '/:id',
+    validateSchema(idParamSchema, 'params'),
+    validateSchema(agentesPutSchema, 'body'),
+    agentesController.putAgente
+);
+router.patch(
+    '/:id',
+    validateSchema(idParamSchema, 'params'),
+    validateSchema(agentesPatchSchema, 'body'),
+    agentesController.patchAgente
+);
+router.delete('/:id', validateSchema(idParamSchema, 'params'), agentesController.deleteAgente);
 
 module.exports = router;

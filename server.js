@@ -9,9 +9,6 @@ app.use('/casos', casosRouter);
 const agentesRouter = require('./routes/agentesRoutes');
 app.use('/agentes', agentesRouter);
 
-const errorHandler = require('./utils/errorHandler');
-app.use(errorHandler);
-
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(

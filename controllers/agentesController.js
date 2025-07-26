@@ -1,13 +1,4 @@
 const agentesRepository = require('../repositories/agentesRepository');
-const ApiError = require('../utils/ApiError');
-
-function getAgenteOrThrowApiError(id) {
-    const agente = agentesRepository.findById(id);
-    if (!agente) {
-        throw new ApiError(404, `Não foi possível encontrar o agente de Id: ${id}.`);
-    }
-    return agente;
-}
 
 function getAllAgentes(req, res) {
     const cargo = req.query.cargo;
@@ -18,7 +9,9 @@ function getAllAgentes(req, res) {
     if (cargo) {
         agentes = agentes.filter((agente) => agente.cargo === cargo);
         if (agentes.length === 0) {
-            throw new ApiError(404, `Nenhum agente de 'cargo' ${cargo} foi encontrado.`);
+            return res.status(404).json({
+                message: `Não foi possível encontrar agentes com o cargo: ${cargo}.`,
+            });
         }
     }
 
@@ -41,7 +34,12 @@ function getAllAgentes(req, res) {
 
 function getAgenteById(req, res) {
     const id = req.params.id;
-    const agente = getAgenteOrThrowApiError(id);
+    const agente = agentesRepository.findById(id);
+    if (!agente) {
+        return res.status(404).json({
+            message: `Não foi possível encontrar o agente de Id: ${id}.`,
+        });
+    }
     res.status(200).json(agente);
 }
 
@@ -53,20 +51,33 @@ function postAgente(req, res) {
 
 function putAgente(req, res) {
     const id = req.params.id;
-    getAgenteOrThrowApiError(id);
+    const agente = agentesRepository.findById(id);
 
-    const newAgente = ({ nome, dataDeIncorporacao, cargo } = req.body);
-    const updatedAgente = agentesRepository.update(id, newAgente);
+    if (!agente) {
+        return res.status(404).json({
+            message: `Não foi possível encontrar o agente de Id: ${id}.`,
+        });
+    }
+
+    const updateAgenteData = ({ nome, dataDeIncorporacao, cargo } = req.body);
+    const updatedAgente = agentesRepository.update(id, updateAgenteData);
     res.status(200).json(updatedAgente);
 }
 
 function patchAgente(req, res) {
     const id = req.params.id;
-    const agente = getAgenteOrThrowApiError(id);
-    const { nome, dataDeIncorporacao, cargo } = req.body;
+    const agente = agentesRepository.findById(id);
+    if (!agente) {
+        return res.status(404).json({
+            message: `Não foi possível encontrar o agente de Id: ${id}.`,
+        });
+    }
 
-    if (!nome && !dataDeIncorporacao && !cargo) {
-        throw new ApiError(400, 'Deve haver pelo menos um campo para realizar a atualização');
+    const { nome, dataDeIncorporacao, cargo } = req.body;
+    if (nome === undefined && dataDeIncorporacao === undefined && cargo === undefined) {
+        return res.status(400).json({
+            message: 'Deve haver pelo menos um campo para realizar a atualização de agente',
+        });
     }
 
     const updatedAgenteData = {
@@ -81,7 +92,12 @@ function patchAgente(req, res) {
 
 function deleteAgente(req, res) {
     const id = req.params.id;
-    getAgenteOrThrowApiError(id);
+    const agente = agentesRepository.findById(id);
+    if (!agente) {
+        return res.status(404).json({
+            message: `Não foi possível encontrar o agente de Id: ${id}.`,
+        });
+    }
 
     agentesRepository.remove(id);
     res.status(204).send();
@@ -94,5 +110,4 @@ module.exports = {
     putAgente,
     patchAgente,
     deleteAgente,
-    getAgenteOrThrowApiError,
 };
