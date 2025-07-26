@@ -37,10 +37,12 @@ function remove(id) {
 }
 
 function search(search) {
-    const terms = search.trim().toLowerCase().split(/\s+/);
+    search = search.trim().toLowerCase();
     return casos.filter((caso) => {
-        const text = `${caso.titulo} ${caso.descricao}`.toLowerCase();
-        return terms.every((term) => text.includes(term));
+        return (
+            caso.titulo.toLowerCase().includes(search) ||
+            caso.descricao.toLowerCase().includes(search)
+        );
     });
 }
 
