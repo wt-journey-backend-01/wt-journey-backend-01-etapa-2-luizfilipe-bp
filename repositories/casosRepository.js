@@ -1,4 +1,3 @@
-const { v4: uuid } = require('uuid');
 const casos = [];
 function findAll() {
     return casos;
@@ -9,7 +8,7 @@ function findById(id) {
 }
 
 function create(caso) {
-    const createdCaso = { id: uuid(), ...caso };
+    const createdCaso = { ...caso };
     casos.push(createdCaso);
     return createdCaso;
 }

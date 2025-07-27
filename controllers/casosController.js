@@ -1,6 +1,7 @@
 const casosRepository = require('../repositories/casosRepository');
 const agentesRepository = require('../repositories/agentesRepository');
-
+const { v4: uuid } = require('uuid');
+const { id } = require('zod/locales');
 function getAllCasos(req, res) {
     const agente_id = req.query.agente_id;
     const status = req.query.status;
@@ -83,6 +84,7 @@ function postCaso(req, res) {
     }
 
     const newCasoData = {
+        id: uuid(),
         titulo,
         descricao,
         status,

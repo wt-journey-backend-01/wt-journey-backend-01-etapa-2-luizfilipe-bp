@@ -10,7 +10,7 @@ function findById(id) {
 }
 
 function create(agente) {
-    const createdAgente = { id: uuid(), ...agente };
+    const createdAgente = { ...agente };
     agentes.push(createdAgente);
     return createdAgente;
 }

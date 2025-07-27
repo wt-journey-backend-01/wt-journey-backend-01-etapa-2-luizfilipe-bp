@@ -1,4 +1,5 @@
 const agentesRepository = require('../repositories/agentesRepository');
+const { v4: uuid } = require('uuid');
 
 function getAllAgentes(req, res) {
     const cargo = req.query.cargo;
@@ -40,6 +41,7 @@ function postAgente(req, res) {
     const { nome, dataDeIncorporacao, cargo } = req.body;
 
     const newAgenteData = {
+        id: uuid(),
         nome,
         dataDeIncorporacao,
         cargo,
