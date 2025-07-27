@@ -2,12 +2,6 @@ const express = require('express');
 const router = express.Router();
 const agentesController = require('../controllers/agentesController');
 const validateUUIDParam = require('../utils/validateUUIDParam');
-const {
-    agentesPostSchema,
-    agentesPutSchema,
-    agentesPatchSchema,
-} = require('../utils/schemaValidator');
-const { validateSchema } = require('../utils/validateSchema');
 /**
  * @swagger
  * tags:
@@ -38,8 +32,6 @@ const { validateSchema } = require('../utils/validateSchema');
  *     responses:
  *       200:
  *         description: Lista de agentes
- *       400:
- *         description: Erro de validação dos parâmetros de filtro
  *       404:
  *         description: Nenhum agente encontrado com os filtros fornecidos
  *       500:
@@ -99,7 +91,7 @@ router.get('/:id', validateUUIDParam, agentesController.getAgenteById);
  *       500:
  *         description: Erro interno do servidor ao tentar criar o agente
  */
-router.post('/', validateSchema(agentesPostSchema), agentesController.postAgente);
+router.post('/', agentesController.postAgente);
 
 /**
  * @swagger
@@ -139,12 +131,7 @@ router.post('/', validateSchema(agentesPostSchema), agentesController.postAgente
  *       500:
  *         description: Erro interno do servidor ao tentar atualizar o agente
  */
-router.put(
-    '/:id',
-    validateUUIDParam,
-    validateSchema(agentesPutSchema),
-    agentesController.putAgente
-);
+router.put('/:id', validateUUIDParam, agentesController.putAgente);
 
 /**
  * @swagger
@@ -183,12 +170,7 @@ router.put(
  *       500:
  *         description: Erro interno do servidor ao tentar atualizar o agente
  */
-router.patch(
-    '/:id',
-    validateUUIDParam,
-    validateSchema(agentesPatchSchema),
-    agentesController.patchAgente
-);
+router.patch('/:id', validateUUIDParam, agentesController.patchAgente);
 
 /**
  * @swagger

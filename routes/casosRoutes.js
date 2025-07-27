@@ -2,8 +2,6 @@ const express = require('express');
 const router = express.Router();
 const casosController = require('../controllers/casosController');
 const validateUUIDParam = require('../utils/validateUUIDParam');
-const { casosPostSchema, casosPutSchema, casosPatchSchema } = require('../utils/schemaValidator');
-const { validateSchema } = require('../utils/validateSchema');
 
 /**
  * @swagger
@@ -28,10 +26,8 @@ const { validateSchema } = require('../utils/validateSchema');
  *     responses:
  *       200:
  *         description: Lista de casos
- *       400:
- *         description: Erro de validação dos parâmetros de filtro
  *       404:
- *         description: Nenhum caso encontrado com os filtros fornecidos
+ *         description: Nenhum caso encontrado com os filtros fornecidos ou filtro não encontrado
  *       500:
  *         description: Erro interno do servidor ao tentar buscar os casos
  */
@@ -153,7 +149,7 @@ router.get('/:id', validateUUIDParam, casosController.getCasoById);
  *       500:
  *         description: Erro interno do servidor ao tentar criar o caso
  */
-router.post('/', validateSchema(casosPostSchema), casosController.postCaso);
+router.post('/', casosController.postCaso);
 
 /**
  * @swagger
@@ -196,7 +192,7 @@ router.post('/', validateSchema(casosPostSchema), casosController.postCaso);
  *       500:
  *         description: Erro interno do servidor ao tentar atualizar o caso
  */
-router.put('/:id', validateUUIDParam, validateSchema(casosPutSchema), casosController.updateCaso);
+router.put('/:id', validateUUIDParam, casosController.updateCaso);
 
 /**
  * @swagger
@@ -238,12 +234,7 @@ router.put('/:id', validateUUIDParam, validateSchema(casosPutSchema), casosContr
  *       500:
  *         description: Erro interno do servidor ao tentar atualizar o caso
  */
-router.patch(
-    '/:id',
-    validateUUIDParam,
-    validateSchema(casosPatchSchema),
-    casosController.patchCaso
-);
+router.patch('/:id', validateUUIDParam, casosController.patchCaso);
 
 /**
  * @swagger

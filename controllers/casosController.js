@@ -1,7 +1,6 @@
 const casosRepository = require('../repositories/casosRepository');
 const agentesRepository = require('../repositories/agentesRepository');
-const { v4: uuid } = require('uuid');
-const { id } = require('zod/locales');
+
 function getAllCasos(req, res) {
     const agente_id = req.query.agente_id;
     const status = req.query.status;
@@ -77,6 +76,18 @@ function searchCasos(req, res) {
 
 function postCaso(req, res) {
     const { titulo, descricao, status, agente_id } = req.body;
+    if (!titulo || !descricao || !status || !agente_id) {
+        return res.status(400).json({
+            message:
+                'Os campos titulo, descricao, status e agente_id são obrigatórios para adicionar um novo caso.',
+        });
+    }
+    if (!['aberto', 'solucionado'].includes(status)) {
+        return res.status(400).json({
+            message: "O status de um caso deve ser 'aberto' ou 'solucionado'.",
+        });
+    }
+
     if (!agentesRepository.findById(agente_id)) {
         return res.status(404).json({
             message: `Não foi possível encontrar o agente de Id: ${agente_id}.`,
@@ -84,7 +95,6 @@ function postCaso(req, res) {
     }
 
     const newCasoData = {
-        id: uuid(),
         titulo,
         descricao,
         status,
@@ -95,8 +105,20 @@ function postCaso(req, res) {
 }
 
 function updateCaso(req, res) {
+    if ('id' in req.body) {
+        return res.status(400).json({
+            message: "O campo 'id' não pode ser atualizado.",
+        });
+    }
+
     const id = req.params.id;
     const { titulo, descricao, status, agente_id } = req.body;
+    if (!titulo || !descricao || !status || !agente_id) {
+        return res.status(400).json({
+            message:
+                'Os campos titulo, descricao, status e agente_id são obrigatórios para atualizar um caso.',
+        });
+    }
 
     if (!casosRepository.findById(id)) {
         return res.status(404).json({
@@ -107,6 +129,12 @@ function updateCaso(req, res) {
     if (!agentesRepository.findById(agente_id)) {
         return res.status(404).json({
             message: `Não foi possível encontrar o agente de Id: ${agente_id}.`,
+        });
+    }
+
+    if (!['aberto', 'solucionado'].includes(status)) {
+        return res.status(400).json({
+            message: "O status de um caso deve ser 'aberto' ou 'solucionado'.",
         });
     }
 
@@ -121,6 +149,12 @@ function updateCaso(req, res) {
 }
 
 function patchCaso(req, res) {
+    if ('id' in req.body) {
+        return res.status(400).json({
+            message: "O campo 'id' não pode ser atualizado.",
+        });
+    }
+
     const id = req.params.id;
     const { titulo, descricao, status, agente_id } = req.body;
     if (!titulo && !descricao && !status && !agente_id) {
@@ -140,6 +174,12 @@ function patchCaso(req, res) {
     if (agente_id !== undefined && !agentesRepository.findById(agente_id)) {
         return res.status(404).json({
             message: `Não foi possível encontrar o agente de Id: ${agente_id}.`,
+        });
+    }
+
+    if (status !== undefined && !['aberto', 'solucionado'].includes(status)) {
+        return res.status(400).json({
+            message: "O status de um caso deve ser 'aberto' ou 'solucionado'.",
         });
     }
 
