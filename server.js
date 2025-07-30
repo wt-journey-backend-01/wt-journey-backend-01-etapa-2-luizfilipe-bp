@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const setupSwagger = require('./docs/swagger');
+const swaggerUi = require('swagger-ui-express');
 
 app.use(express.json());
 
@@ -10,7 +10,8 @@ app.use('/casos', casosRouter);
 const agentesRouter = require('./routes/agentesRoutes');
 app.use('/agentes', agentesRouter);
 
-setupSwagger(app);
+const swaggerDocs = require('./docs/swagger.json');
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 const PORT = 3000;
 app.listen(PORT, () => {
