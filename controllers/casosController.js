@@ -45,10 +45,10 @@ function getCasoById(req, res) {
     res.status(200).json(caso);
 }
 
-function getAgenteByCaso(req, res) {
+async function getAgenteByCaso(req, res) {
     const caso_id = req.params.id;
     const caso = getCasoOrThrowApiError(caso_id);
-    const agente = agentesController.getAgenteOrThrowApiError(caso.agente_id);
+    const agente = await agentesController.getAgenteOrThrowApiError(caso.agente_id);
 
     res.status(200).json(agente);
 }
@@ -70,24 +70,24 @@ function searchCasos(req, res) {
     res.status(200).send(searchedCasos);
 }
 
-function postCaso(req, res) {
+async function postCaso(req, res) {
     const caso = req.body;
-    agentesController.getAgenteOrThrowApiError(caso.agente_id);
+    await agentesController.getAgenteOrThrowApiError(caso.agente_id);
     const createdCaso = casosRepository.create(caso);
     res.status(201).json(createdCaso);
 }
 
-function updateCaso(req, res) {
+async function updateCaso(req, res) {
     const id = req.params.id;
     const caso = req.body;
     getCasoOrThrowApiError(id);
-    agentesController.getAgenteOrThrowApiError(caso.agente_id);
+    await agentesController.getAgenteOrThrowApiError(caso.agente_id);
 
     const updatedCaso = casosRepository.update(id, caso);
     res.status(200).json(updatedCaso);
 }
 
-function patchCaso(req, res) {
+async function patchCaso(req, res) {
     const id = req.params.id;
     getCasoOrThrowApiError(id);
 
@@ -99,7 +99,7 @@ function patchCaso(req, res) {
         );
     }
     if (caso.agente_id) {
-        agentesController.getAgenteOrThrowApiError(caso.agente_id);
+        await agentesController.getAgenteOrThrowApiError(caso.agente_id);
     }
 
     const patchedCaso = casosRepository.update(id, caso);
