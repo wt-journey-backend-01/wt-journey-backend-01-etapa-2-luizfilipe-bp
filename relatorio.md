@@ -2,7 +2,7 @@
 
 # 🧪 Relatório de Avaliação – Journey Levty Etapa 1 - luizfilipe-bp
 
-**Data:** 16/08/2025 15:51
+**Data:** 16/08/2025 16:19
 
 **Nota Final:** `100.00/100`
 **Status:** ✅ Aprovado
@@ -12,7 +12,11 @@
 - Todos os requisitos básicos foram atendidos. Excelente trabalho!
 
 ## ⭐ Itens de Destaque (recupera até 40 pontos)
-- Nenhum item bônus foi identificado. Tente adicionar mais estilo e complexidade ao seu código nas próximas tentativas!
+- Você conquistou `2` bônus! Excelente trabalho nos detalhes adicionais!
+  - 🌟 **Testes bônus passados**: `Simple Filtering: Estudante implementou endpoint de filtragem de caso por status corretamente`
+    - Parabéns! Você implementou a filtragem de casos por status (`GET /casos?status=...`) corretamente. Isso adiciona uma funcionalidade poderosa à sua API para gerenciar casos.
+  - 🌟 **Testes bônus passados**: `Simple Filtering: Estudante implementou endpoint de filtragem de caso por agente corretamente`
+    - Ótimo! A filtragem de casos por `agente_id` (`GET /casos?agente_id=...`) está funcionando corretamente. Isso permite listar casos específicos de cada agente.
 
 ## ❌ Problemas Detectados (Descontos de até 100 pontos)
 - Nenhuma infração grave foi detectada. Muito bom nesse aspecto!
