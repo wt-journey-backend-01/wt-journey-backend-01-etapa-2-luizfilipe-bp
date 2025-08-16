@@ -22,11 +22,11 @@ const baseCasoSchema = z.object({
                 ? 'O campo status é obrigatório'
                 : "O campo status deve ser 'aberto' ou 'solucionado'",
     }),
-    agente_id: z.uuidv4({
+    agente_id: z.string({
         error: (issue) =>
             issue.input === undefined
                 ? 'O campo agente_id é obrigatório'
-                : 'O campo agente_id deve ser um UUID válido',
+                : 'O campo agente_id não pode ser vazio',
     }),
 });
 
