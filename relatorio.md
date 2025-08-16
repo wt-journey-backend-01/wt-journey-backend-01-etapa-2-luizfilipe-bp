@@ -2,21 +2,19 @@
 
 # 🧪 Relatório de Avaliação – Journey Levty Etapa 1 - luizfilipe-bp
 
-**Data:** 30/07/2025 18:15
+**Data:** 16/08/2025 15:28
 
-**Nota Final:** `100.00/100`
+**Nota Final:** `94.00/100`
 **Status:** ✅ Aprovado
 
 ---
 ## ✅ Requisitos Obrigatórios
-- Todos os requisitos básicos foram atendidos. Excelente trabalho!
+- Foram encontrados `1` problemas nos requisitos obrigatórios. Veja abaixo os testes que falharam:
+  - ⚠️ **Falhou no teste**: `CREATE: Recebe status code 404 ao tentar criar caso com id de agente inválido/inexistente`
+    - **Melhoria sugerida**: Ao tentar criar um caso com um `agente_id` inexistente, o teste não recebeu `404 Not Found`. Sua API deve ser capaz de identificar que o agente referenciado não existe e retornar o status apropriado.
 
 ## ⭐ Itens de Destaque (recupera até 40 pontos)
-- Você conquistou `2` bônus! Excelente trabalho nos detalhes adicionais!
-  - 🌟 **Testes bônus passados**: `Simple Filtering: Estudante implementou endpoint de filtragem de caso por status corretamente`
-    - Parabéns! Você implementou a filtragem de casos por status (`GET /casos?status=...`) corretamente. Isso adiciona uma funcionalidade poderosa à sua API para gerenciar casos.
-  - 🌟 **Testes bônus passados**: `Simple Filtering: Estudante implementou endpoint de filtragem de caso por agente corretamente`
-    - Ótimo! A filtragem de casos por `agente_id` (`GET /casos?agente_id=...`) está funcionando corretamente. Isso permite listar casos específicos de cada agente.
+- Nenhum item bônus foi identificado. Tente adicionar mais estilo e complexidade ao seu código nas próximas tentativas!
 
 ## ❌ Problemas Detectados (Descontos de até 100 pontos)
 - Nenhuma infração grave foi detectada. Muito bom nesse aspecto!
