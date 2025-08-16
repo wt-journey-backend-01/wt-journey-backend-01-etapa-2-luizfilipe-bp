@@ -1,7 +1,17 @@
 const { v4: uuid } = require('uuid');
 const casos = [];
-function findAll() {
-    return casos;
+function findAll(filters) {
+    let results = casos;
+
+    if (filters.status) {
+        results = results.filter((caso) => caso.status === filters.status);
+    }
+
+    if (filters.agente_id) {
+        results = results.filter((caso) => caso.agente_id === filters.agente_id);
+    }
+
+    return results;
 }
 
 function findById(id) {

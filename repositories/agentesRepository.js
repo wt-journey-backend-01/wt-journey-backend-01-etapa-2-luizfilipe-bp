@@ -1,8 +1,22 @@
 const { v4: uuid } = require('uuid');
 const agentes = [];
 
-function findAll() {
-    return agentes;
+function findAll(filters, sort) {
+    let results = agentes;
+
+    if (filters.cargo) {
+        results = results.filter((agente) => agente.cargo === filters.cargo);
+    }
+
+    if (sort) {
+        results.sort((a, b) => {
+            const dateA = new Date(a.dataDeIncorporacao).getTime();
+            const dateB = new Date(b.dataDeIncorporacao).getTime();
+            return sort === 'dataDeIncorporacao' ? dateA - dateB : dateB - dateA;
+        });
+    }
+
+    return results;
 }
 
 function findById(id) {

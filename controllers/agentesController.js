@@ -17,11 +17,10 @@ function getAllAgentes(req, res) {
             sort: "O parâmetro 'sort' deve ser 'dataDeIncorporacao' ou '-dataDeIncorporacao'.",
         });
     }
-    const filtros = {};
-    if (cargo) filtros.cargo = cargo;
-    if (sort) filtros.sort = sort;
-    const agentes = agentesRepository.findAll(filtros);
+    const filters = {};
+    if (cargo) filters.cargo = cargo;
 
+    const agentes = agentesRepository.findAll(filters, sort);
     if (cargo) {
         if (agentes.length === 0) {
             throw new ApiError(404, `Não foi possível encontrar agentes com o cargo: ${cargo}.`);
